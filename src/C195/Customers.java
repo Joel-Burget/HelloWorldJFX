@@ -9,16 +9,18 @@ import java.time.LocalDate;
 public class Customers {
     private int customerId;
     private String customerName;
-    private String address;
-    private String zip;
-    private String phoneNumber;
+    private String customerAddress;
+    private String customerZip;
+    private String customerPhone;
+    private int divisionId;
 
-    public Customers(int customerId, String customerName, String address, String zip, String phoneNumber){
+    public Customers(int customerId, String customerName, String address, String customerZip, String customerPhone, int divisionId){
         this.customerId = customerId;
         this.customerName = customerName;
-        this.address = address;
-        this.zip = zip;
-        this.phoneNumber = phoneNumber;
+        this.customerAddress = address;
+        this.customerZip = customerZip;
+        this.customerPhone = customerPhone;
+        this.divisionId = divisionId;
     }
 
     public static ObservableList<Customers> getAllCustomers(){
@@ -29,6 +31,7 @@ public class Customers {
         String custAdd;
         String custZip;
         String custPhone;
+        int divId;
 
         try{
             JDBC.makePreparedStatement(statement, JDBC.getConnection());
@@ -39,8 +42,9 @@ public class Customers {
                 custAdd = rs.getString(3);
                 custZip = rs.getString(4);
                 custPhone = rs.getString(5);
+                divId = rs.getInt(10);
 
-                Customers temp = new Customers(custID, custName, custAdd, custZip, custPhone);
+                Customers temp = new Customers(custID, custName, custAdd, custZip, custPhone, divId);
                 allCustomers.add(temp);
             }
         }catch(Exception e){
@@ -119,26 +123,34 @@ public class Customers {
     }
 
     public String getAddress() {
-        return address;
+        return customerAddress;
     }
 
     public void setAddress(String address) {
-        this.address = address;
+        this.customerAddress = address;
     }
 
-    public String getZip() {
-        return zip;
+    public String getCustomerZip() {
+        return customerZip;
     }
 
-    public void setZip(String zip) {
-        this.zip = zip;
+    public void setCustomerZip(String customerZip) {
+        this.customerZip = customerZip;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getCustomerPhone() {
+        return customerPhone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public int getDivisionId() {
+        return divisionId;
+    }
+
+    public void setDivisionId(int divisionId) {
+        this.divisionId = divisionId;
     }
 }

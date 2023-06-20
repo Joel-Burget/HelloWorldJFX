@@ -12,5 +12,6 @@
       <Button fx:id="loginButton" layoutX="123.0" layoutY="128.0" mnemonicParsing="false" onAction="#loginAction" text="Login" />
       <Button fx:id="cancelButton" layoutX="220.0" layoutY="128.0" mnemonicParsing="false" onAction="#cancelAction" text="Cancel" />
       <Label fx:id="regionLabel" layoutX="28.0" layoutY="14.0" text="Label" />
+      <Label fx:id="errorLabel" layoutX="123.0" layoutY="179.0" text="Error Message" textFill="#d70f0f" visible="false" />
    </children>
 </AnchorPane>

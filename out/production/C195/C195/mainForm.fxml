@@ -3,12 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.mainController">
+<AnchorPane prefHeight="1200.0" prefWidth="2400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.mainController">
    <children>
-      <TableView fx:id="customerTable" layoutX="61.0" layoutY="76.0" prefHeight="256.0" prefWidth="297.0">
+      <TableView fx:id="apptTable" layoutX="61.0" layoutY="76.0" prefHeight="256.0" prefWidth="400.0">
         <columns>
-          <TableColumn fx:id="custIdCol" prefWidth="120.0" text="Appointment ID" />
-          <TableColumn fx:id="customerName" prefWidth="75.0" text="Title" />
+          <TableColumn fx:id="apptId" prefWidth="120.0" text="Appointment ID" />
+          <TableColumn fx:id="title" prefWidth="75.0" text="Title" />
+            <TableColumn fx:id="description" prefWidth="75.0" text="Description" />
+            <TableColumn fx:id="location" prefWidth="75.0" text="Location" />
+            <TableColumn fx:id="type" prefWidth="75.0" text="Type" />
+            <TableColumn fx:id="start" prefWidth="75.0" text="Start Time" />
+            <TableColumn fx:id="end" prefWidth="75.0" text="End Time" />
         </columns>
       </TableView>
    </children>
