@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.time.ZoneId;
 
 public class LoginController {
@@ -35,10 +36,9 @@ public class LoginController {
 
 
     public void loginAction(ActionEvent actionEvent) {
-            String statement = "SELECT * from USERS WHERE User_Name= '" + username + "'";
-
             username = usernameField.getText();
             password = passwordField.getText();
+            String statement = "SELECT * from USERS WHERE User_Name= '" + username + "'";
 
             try{
                 System.out.println("button pressed");
