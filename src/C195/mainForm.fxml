@@ -3,18 +3,34 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="1200.0" prefWidth="2400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.mainController">
-   <children>
-      <TableView fx:id="appointmentTableView" layoutX="61.0" layoutY="76.0" prefHeight="256.0" prefWidth="400.0">
-        <columns>
-          <TableColumn fx:id="id" prefWidth="120.0" text="Appointment ID" />
-          <TableColumn fx:id="title" prefWidth="75.0" text="Title" />
-            <TableColumn fx:id="description" prefWidth="75.0" text="Description" />
-            <TableColumn fx:id="locations" prefWidth="75.0" text="Location" />
-            <TableColumn fx:id="type" prefWidth="75.0" text="Type" />
-            <TableColumn fx:id="start" prefWidth="75.0" text="Start Time" />
-            <TableColumn fx:id="end" prefWidth="75.0" text="End Time" />
-        </columns>
-      </TableView>
-   </children>
-</AnchorPane>
+<Pane prefHeight="380.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.mainController">
+         <children>
+            <TableView fx:id="appointmentTableView" layoutX="567.0" layoutY="54.0" prefHeight="256.0" prefWidth="400.0">
+              <columns>
+                <TableColumn fx:id="id" prefWidth="106.0" text="Appointment ID" />
+                <TableColumn fx:id="title" prefWidth="44.0" text="Title" />
+                  <TableColumn fx:id="description" prefWidth="97.0" text="Description" />
+                  <TableColumn fx:id="locations" prefWidth="98.0" text="Location" />
+                  <TableColumn fx:id="type" prefWidth="75.0" text="Type" />
+                  <TableColumn fx:id="start" prefWidth="75.0" text="Start Time" />
+                  <TableColumn fx:id="end" prefWidth="75.0" text="End Time" />
+              </columns>
+            </TableView>
+            <TableView fx:id="customerTableView" layoutX="82.0" layoutY="54.0" prefHeight="256.0" prefWidth="422.0">
+              <columns>
+                <TableColumn fx:id="customerId" prefWidth="76.0" text="Customer ID" />
+                <TableColumn fx:id="customerName" prefWidth="74.0" text="Name" />
+                  <TableColumn fx:id="customerAddress" prefWidth="97.0" text="Address" />
+                  <TableColumn fx:id="customerZip" prefWidth="67.0" text="Zip Code" />
+                  <TableColumn fx:id="customerPhone" prefWidth="107.0" text="Phone Number" />
+                  <TableColumn fx:id="divisionId" prefWidth="107.0" text="Division ID" />
+              </columns>
+            </TableView>
+            <Button fx:id="newCustomer" layoutX="82.0" layoutY="327.0" mnemonicParsing="false" text="Create New " />
+            <Button fx:id="createAppointment" layoutX="567.0" layoutY="327.0" mnemonicParsing="false" text="Create New " />
+            <Button fx:id="deleteCustomer" layoutX="242.0" layoutY="327.0" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="editCusomter" layoutX="178.0" layoutY="327.0" mnemonicParsing="false" text="Edit" />
+            <Button fx:id="editAppointment" layoutX="669.0" layoutY="327.0" mnemonicParsing="false" text="Edit" />
+            <Button fx:id="deleteAppointment" layoutX="726.0" layoutY="327.0" mnemonicParsing="false" text="Delete" />
+         </children>
+</Pane>

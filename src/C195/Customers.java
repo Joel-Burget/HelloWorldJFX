@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class Customers {
     private int customerId;
     private String customerName;
-    private String customerAddress;
+    private String address;
     private String customerZip;
     private String customerPhone;
     private int divisionId;
@@ -17,7 +17,7 @@ public class Customers {
     public Customers(int customerId, String customerName, String address, String customerZip, String customerPhone, int divisionId){
         this.customerId = customerId;
         this.customerName = customerName;
-        this.customerAddress = address;
+        this.address = address;
         this.customerZip = customerZip;
         this.customerPhone = customerPhone;
         this.divisionId = divisionId;
@@ -57,8 +57,10 @@ public class Customers {
 
     public static void createCustomer(String name, String address, String postal, int phoneNumber, LocalDate createdDate, int divisonID){
         try{
-            String statement = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Division_ID) VALUES('"
-                    + name + "', '" + address + "', '" + postal + "', '" + phoneNumber + "', '" + createdDate + "', '" + divisonID + "');";
+            String username = LoginController.getUsername();
+            String statement = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Division_ID, Created_By) VALUES('"
+                    + name + "', '" + address + "', '" + postal + "', '" + phoneNumber + "', '" + createdDate + "', '" + divisonID + "', '"
+                    + username + "');";
 
             JDBC.makePreparedStatement(statement, JDBC.getConnection());
             JDBC.getPreparedStatement().executeUpdate();
@@ -123,11 +125,11 @@ public class Customers {
     }
 
     public String getAddress() {
-        return customerAddress;
+        return address;
     }
 
     public void setAddress(String address) {
-        this.customerAddress = address;
+        this.address = address;
     }
 
     public String getCustomerZip() {

@@ -17,15 +17,21 @@ public class LoginController {
 
     public Button loginButton;
     public Button cancelButton;
+    @FXML
     public PasswordField passwordField;
+    @FXML
     public TextField usernameField;
     public Label regionLabel;
     @FXML
     public Label errorLabel;
+    @FXML
+    public Label usernameLabel;
+    @FXML
+    public Label passwordLabel;
 
-    String username;
+
+    public static String username;
     String password;
-    Stage login = new Stage();
     String systemLanguage;
 
     public void initialize() throws IOException {
@@ -33,7 +39,19 @@ public class LoginController {
         System.out.println(currentLocale);
         regionLabel.setText(currentLocale.toString());
         systemLanguage = Locale.getDefault().getLanguage();
-        System.out.println(systemLanguage);
+
+
+        //Setting buttons to French and correcting UI layout
+        if(systemLanguage.equals("fr")){
+            usernameLabel.setText("Nom d'utilisateur");
+            usernameField.setLayoutX(160);
+            passwordLabel.setText("Mot de passe");
+            passwordField.setLayoutX(160);
+            loginButton.setText("Connexion");
+            loginButton.setLayoutX(160);
+            cancelButton.setText("Annuler");
+            cancelButton.setLayoutX(250);
+        }
     }
 
 
@@ -44,7 +62,6 @@ public class LoginController {
             String statement = "SELECT * from USERS WHERE User_Name= '" + username + "'";
 
             try{
-                System.out.println("button pressed");
                 JDBC.makePreparedStatement(statement, JDBC.getConnection());
                 ResultSet rs = JDBC.getPreparedStatement().executeQuery(statement);
 
@@ -54,7 +71,7 @@ public class LoginController {
                         Stage mainForm = new Stage();
                         Parent root = FXMLLoader.load(getClass().getResource("mainForm.fxml"));
                         mainForm.setTitle("Welcome");
-                        mainForm.setScene(new Scene(root, 250, 250));
+                        mainForm.setScene(new Scene(root, 1120, 380));
                         mainForm.show();
                         Stage login = (Stage) loginButton.getScene().getWindow();
                         login.close();
@@ -72,7 +89,7 @@ public class LoginController {
                         }
                     }
                 }
-
+                //translating error messages to French and checking username
                 if(!rs.next()){
                     if(!errorLabel.isVisible()){
                         if(systemLanguage.equals("fr")){
@@ -95,4 +112,7 @@ public class LoginController {
     public void cancelAction(ActionEvent actionEvent) {
         System.exit(0);
     }
+
+    public static String getUsername(){return username;}
+
 }
