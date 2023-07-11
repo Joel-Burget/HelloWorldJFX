@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Customers {
     private int customerId;
@@ -55,13 +56,14 @@ public class Customers {
     }
 
 
-    public static void createCustomer(String name, String address, String postal, int phoneNumber, LocalDate createdDate, int divisonID){
-        try{
-            String username = LoginController.getUsername();
-            String statement = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Division_ID, Created_By) VALUES('"
-                    + name + "', '" + address + "', '" + postal + "', '" + phoneNumber + "', '" + createdDate + "', '" + divisonID + "', '"
-                    + username + "');";
+    public static void createCustomer(Customers customer){
+        String statement = "INSERT INTO customers (Customer_ID, Customer_Name, Address, Postal_Code, Phone, Create_Date, Last_Update, Division_ID, Created_By, Last_Updated_By) VALUES('"
+                + customer.getCustomerId() + "', '" + customer.getCustomerName() + "', '" + customer.getAddress() + "', '" + customer.getCustomerZip()
+                + "', '" + customer.getCustomerPhone() + "', '" + LocalDateTime.now() + "', '" + LocalDateTime.now() + "', '" + customer.getDivisionId() + "', '"
+                +  customer.getDivisionId() + "', '" + LoginController.getUsername() + "');";
+        System.out.println(statement);
 
+        try{
             JDBC.makePreparedStatement(statement, JDBC.getConnection());
             JDBC.getPreparedStatement().executeUpdate();
             System.out.println("Customer created successfully.");
@@ -70,9 +72,11 @@ public class Customers {
         }
     }
 
-    public static void updateCustomer(int CustomerID, String name, String address, String postal, int phoneNumber){
-        String statement = "UPDATE customers SET Customer_Name = '" + name + "', Address =" + "'" + address + "', " + "Postal_Code = '" + postal + "', "
-                + "Phone ='" + phoneNumber + "' " + "WHERE Customer_ID = '" + CustomerID + "'";
+    public static void updateCustomer(Customers customer){
+        String statement = "UPDATE customers SET Customer_Name = '" + customer.getCustomerName() + "', Address =" + "'" + customer.getAddress()
+                + "', " + "Postal_Code = '" + customer.getCustomerZip() + "', "
+                + "Phone ='" + customer.getCustomerPhone() + "', " + "Last_Update ='" + LocalDateTime.now() + "', " + "Last_Updated_By ='"
+                + LoginController.getUsername() + "' " + "WHERE Customer_ID = '" + customer.getCustomerId() + "';";
         System.out.println(statement);
 
         try{
@@ -107,6 +111,7 @@ public class Customers {
             e.printStackTrace();
         }
     }
+
 
     public int getCustomerId() {
         return customerId;

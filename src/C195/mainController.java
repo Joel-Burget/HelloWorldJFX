@@ -2,9 +2,16 @@ package C195;
 
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 import java.sql.Time;
 
 
@@ -41,9 +48,16 @@ public class mainController {
     public TableColumn<Appointment, Time> start;
     @FXML
     public TableColumn<Appointment, Time> end;
+    public Button newCustomer;
+    public Button createAppointment;
+    public Button deleteCustomer;
+    public Button editCusomter;
+    public Button editAppointment;
+    public Button deleteAppointment;
 
 
     public void initialize(){
+
         //creating customer table
         customerId.setCellValueFactory(new PropertyValueFactory<Customers, Integer>("customerId"));
         customerName.setCellValueFactory(new PropertyValueFactory<Customers, String>("customerName"));
@@ -65,4 +79,13 @@ public class mainController {
         appointmentTableView.setItems(Appointment.getAllAppointments());
 
     }
+
+    public void newCustomerAction() throws IOException {
+        Stage addCustomer = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("addCustomer.fxml"));
+        addCustomer.setTitle("Add a new Customer");
+        addCustomer.setScene(new Scene(root, 365, 400));
+        addCustomer.show();
+    }
+
 }

@@ -26,7 +26,7 @@
                   <TableColumn fx:id="divisionId" prefWidth="107.0" text="Division ID" />
               </columns>
             </TableView>
-            <Button fx:id="newCustomer" layoutX="82.0" layoutY="327.0" mnemonicParsing="false" text="Create New " />
+            <Button fx:id="newCustomer" layoutX="82.0" layoutY="327.0" mnemonicParsing="false" onAction="#newCustomerAction" text="Create New " />
             <Button fx:id="createAppointment" layoutX="567.0" layoutY="327.0" mnemonicParsing="false" text="Create New " />
             <Button fx:id="deleteCustomer" layoutX="242.0" layoutY="327.0" mnemonicParsing="false" text="Delete" />
             <Button fx:id="editCusomter" layoutX="178.0" layoutY="327.0" mnemonicParsing="false" text="Edit" />
