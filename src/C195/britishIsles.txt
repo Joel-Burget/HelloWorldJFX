@@ -1,19 +1,4 @@
-London
-Scotland
+England
 Wales
-Guernsey
-Jersey
-Isle of Man
-Akrotiri and Dhekelia
-Anguilla
-Bermuda
-British Indian Ocean Territory
-British Virgin Islands
-Cayman Islands
-Falkland Islands
-Gibraltar
-Montserrat
-Pitcairn Islands
-Saint Helena, Ascension and Tristan da Cunha
-South Georgia and the South Sandwich Islands
-Turks and Caicos Islands
+Scotland
+Northern Ireland

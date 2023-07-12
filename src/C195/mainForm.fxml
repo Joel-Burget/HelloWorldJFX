@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane prefHeight="380.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.mainController">
+<Pane prefHeight="380.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.MainController">
          <children>
             <TableView fx:id="appointmentTableView" layoutX="567.0" layoutY="54.0" prefHeight="256.0" prefWidth="400.0">
               <columns>

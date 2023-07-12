@@ -4,10 +4,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.ResultSet;
-import java.time.LocalDate;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class Customers {
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
     private int customerId;
     private String customerName;
     private String address;
@@ -67,6 +75,8 @@ public class Customers {
             JDBC.makePreparedStatement(statement, JDBC.getConnection());
             JDBC.getPreparedStatement().executeUpdate();
             System.out.println("Customer created successfully.");
+            getAllCustomers().add(customer);
+
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -113,13 +123,25 @@ public class Customers {
     }
 
 
-    public int getCustomerId() {
-        return customerId;
+    public static int generateCustomerID() {
+        int customerID;
+        try{
+            String query = "SELECT MAX(Customer_ID) FROM customers;";
+            JDBC.makePreparedStatement(query, JDBC.getConnection());
+            ResultSet rs = JDBC.getPreparedStatement().executeQuery();
+
+            while(rs.next()){
+                customerID = rs.getInt(1) +1;
+                System.out.println(customerID);
+                return customerID;
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
+
 
     public String getCustomerName() {
         return customerName;

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.sql.Time;
 
 
-public class mainController {
+public class MainController {
     @FXML
     public TableView<Customers> customerTableView;
     @FXML
@@ -81,11 +81,23 @@ public class mainController {
     }
 
     public void newCustomerAction() throws IOException {
+        //Creates a reference to FXML
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("addCustomer.fxml"));
+        Parent root = loader.load();
+        AddCustomerController customerController = loader.getController();
+        customerController.setMainController(this);
+
+        //creating new window
         Stage addCustomer = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("addCustomer.fxml"));
         addCustomer.setTitle("Add a new Customer");
         addCustomer.setScene(new Scene(root, 365, 400));
         addCustomer.show();
     }
+
+    public void refreshCustomerTable(){
+        customerTableView.getItems().clear();
+        customerTableView.setItems(Customers.getAllCustomers());
+    }
+
 
 }
