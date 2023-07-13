@@ -6,12 +6,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
 
 
@@ -51,13 +54,15 @@ public class MainController {
     public Button newCustomer;
     public Button createAppointment;
     public Button deleteCustomer;
-    public Button editCusomter;
+    public Button editCustomer;
     public Button editAppointment;
     public Button deleteAppointment;
+    public static Customers selectedCustomer;
+    public Label customerWarningLabel;
 
 
-    public void initialize(){
-
+    public void initialize() {
+        customerWarningLabel.setVisible(false);
         //creating customer table
         customerId.setCellValueFactory(new PropertyValueFactory<Customers, Integer>("customerId"));
         customerName.setCellValueFactory(new PropertyValueFactory<Customers, String>("customerName"));
@@ -94,10 +99,70 @@ public class MainController {
         addCustomer.show();
     }
 
-    public void refreshCustomerTable(){
+    public void refreshCustomerTable() {
         customerTableView.getItems().clear();
         customerTableView.setItems(Customers.getAllCustomers());
     }
 
+    public static Customers getSelectedCustomer() {
+        return selectedCustomer;
+    }
 
+    public void modifyCustomerAction() throws IOException {
+        selectedCustomer = customerTableView.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomer != null) {
+            customerWarningLabel.setVisible(false);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("modifyCustomer.fxml"));
+            Parent root = loader.load();
+            ModifyCustomerController modifyController = loader.getController();
+            modifyController.setMainController(this);
+
+            Stage modifyCustomer = new Stage();
+            modifyCustomer.setTitle("Modify Customer");
+            modifyCustomer.setScene(new Scene(root, 365, 400));
+            modifyCustomer.show();
+        } else {
+            customerWarningLabel.setText("Please Select a customer to modify");
+            customerWarningLabel.setVisible(true);
+        }
+    }
+
+    public void deleteCustomerAction() {
+        selectedCustomer = customerTableView.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomer != null) {
+                int count;
+                String statement = "SELECT COUNT(Appointment_ID) FROM appointments WHERE Customer_ID='" + selectedCustomer.getCustomerId() + "'";
+                try {
+                    JDBC.makePreparedStatement(statement, JDBC.getConnection());
+                    ResultSet rs = JDBC.getPreparedStatement().executeQuery();
+                    System.out.println(statement);
+                    while (rs.next()) {
+                        count = rs.getInt(1);
+                        if (count > 0) {
+                            customerWarningLabel.setText(selectedCustomer.getCustomerName() + " could not be deleted: Please delete all " +
+                                    "customers appointments first.");
+                        } else {
+                            customerWarningLabel.setVisible(false);
+                            String query = "DELETE FROM customers WHERE Customer_ID= '" + selectedCustomer.getCustomerId() + "';";
+                            try {
+                                JDBC.makePreparedStatement(query, JDBC.getConnection());
+                                JDBC.getPreparedStatement().executeUpdate();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                            customerWarningLabel.setText(selectedCustomer.getCustomerName() + " has been deleted.");
+                            customerWarningLabel.setVisible(true);
+                            refreshCustomerTable();
+                        }
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }else{
+              customerWarningLabel.setText("Please select a customer to delete");
+              customerWarningLabel.setVisible(true);
+            }
+    }
 }
