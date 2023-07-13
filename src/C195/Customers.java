@@ -68,7 +68,7 @@ public class Customers {
         String statement = "INSERT INTO customers (Customer_ID, Customer_Name, Address, Postal_Code, Phone, Create_Date, Last_Update, Division_ID, Created_By, Last_Updated_By) VALUES('"
                 + customer.getCustomerId() + "', '" + customer.getCustomerName() + "', '" + customer.getAddress() + "', '" + customer.getCustomerZip()
                 + "', '" + customer.getCustomerPhone() + "', '" + LocalDateTime.now() + "', '" + LocalDateTime.now() + "', '" + customer.getDivisionId() + "', '"
-                +  customer.getDivisionId() + "', '" + LoginController.getUsername() + "');";
+                +  LoginController.getUsername() + "', '" + LoginController.getUsername() + "');";
         System.out.println(statement);
 
         try{

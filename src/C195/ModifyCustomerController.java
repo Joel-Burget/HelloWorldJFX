@@ -2,6 +2,7 @@ package C195;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -11,38 +12,44 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
-public class AddCustomerController{
+public class ModifyCustomerController {
     public Label warningLabel;
     private MainController MC;
-    public TextField customerIDField;
     public TextField nameField;
     public TextField addressField;
+    public TextField zipField;
     public ComboBox countryBox;
     public ComboBox stateBox;
-    public Button addButton;
+    public Button modifyButton;
     public Button cancelButton;
-    public TextField zipField;
     public TextField phoneField;
+    public TextField customerIDField;
     String state;
     ObservableList<String> countries = FXCollections.observableArrayList();
     ObservableList<String> states = FXCollections.observableArrayList();
 
-    public void initialize() {
+    public void initialize(){
         warningLabel.setVisible(false);
+        customerIDField.setText(Integer.toString(MainController.getSelectedCustomer().getCustomerId()));
+        nameField.setText(MainController.getSelectedCustomer().getCustomerName());
+        addressField.setText(MainController.getSelectedCustomer().getAddress());
+        zipField.setText(MainController.getSelectedCustomer().getCustomerZip());
+        phoneField.setText(MainController.getSelectedCustomer().getCustomerPhone());
+
         //Adding Countries to combo box
         countries.add("Canada");
         countries.add("United Kingdom");
         countries.add("United States");
         countryBox.setItems(countries);
 
-        //setting on-action to generate state combo box based on country selected
+        //generate state combo box based on country selected
         countryBox.setOnAction((e) -> {
             stateBox.getItems().clear();
             if(countryBox.getSelectionModel().getSelectedItem().equals("Canada")){
@@ -80,16 +87,37 @@ public class AddCustomerController{
                 }
                 stateBox.setItems(states);
             }
-            });
+        });
+
+        try{
+            String query = "SELECT * FROM first_level_divisions WHERE Division_ID='" + MainController.getSelectedCustomer().getDivisionId()
+                    + "';";
+            JDBC.makePreparedStatement(query, JDBC.getConnection());
+            ResultSet rs = JDBC.getPreparedStatement().executeQuery();
+
+            while(rs.next()){
+                if(rs.getInt(7) == 1){
+                    countryBox.getSelectionModel().select(2);
+                    stateBox.getSelectionModel().select(rs.getString(2));
+                }
+                if(rs.getInt(7) == 2){
+                    countryBox.getSelectionModel().select(1);
+                    stateBox.getSelectionModel().select(rs.getString(2));
+                }
+                if(rs.getInt(7) == 3){
+                    countryBox.getSelectionModel().select(0);
+                    stateBox.getSelectionModel().select(rs.getString(2));
+                }
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
     }
 
-    public void addButtonAction(){
-        int ID = Customers.generateCustomerID();
-        String name = nameField.getText();
-        String address = addressField.getText();
-        String zip = zipField.getText();
-        String phone = phoneField.getText();
+
+    public void modifyButtonAction(ActionEvent actionEvent) {
         int divisionID = 0;
+
 
         if(nameField.getText().equals("")){
             nameField.setBorder(new Border(new BorderStroke(javafx.scene.paint.Paint.valueOf("red"), BorderStrokeStyle.SOLID,
@@ -126,27 +154,32 @@ public class AddCustomerController{
                 ResultSet rs = JDBC.getPreparedStatement().executeQuery();
 
                 while(rs.next()){
-                    System.out.println(rs.getInt(1));
                     divisionID = rs.getInt(1);
                 }
             }catch(SQLException e){
                 e.printStackTrace();
             }
 
-            Customers tempCustomer = new Customers(ID, name, address, zip, phone, divisionID);
-
-            Customers.createCustomer(tempCustomer);
-            Customers.getAllCustomers().add(tempCustomer);
-            addButton.getScene().getWindow().hide();
+            try {
+                String query = "UPDATE customers SET Customer_Name = '" + nameField.getText() + "' , Address = '" + addressField.getText()
+                        + "', Postal_Code = '" + zipField.getText() + "', Phone = '" + phoneField.getText() + "', Last_Update='" + LocalDateTime.now() + "', Last_Updated_By='" +
+                        LoginController.getUsername() + "', Division_ID='" + divisionID + "' WHERE Customer_ID='" + customerIDField.getText() + "';";
+                JDBC.makePreparedStatement(query, JDBC.getConnection());
+                JDBC.getPreparedStatement().executeUpdate();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+            modifyButton.getScene().getWindow().hide();
             MC.refreshCustomerTable();
         }
+
+    }
+
+    public void cancelButtonAction(ActionEvent actionEvent) {
+        cancelButton.getScene().getWindow().hide();
     }
 
     public void setMainController(MainController MC){
         this.MC = MC;
-    }
-
-    public void cancelButtonAction(){
-        cancelButton.getScene().getWindow().hide();
     }
 }
