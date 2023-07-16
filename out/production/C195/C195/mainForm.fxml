@@ -5,17 +5,44 @@
 
 <Pane prefHeight="380.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.MainController">
          <children>
-            <TableView fx:id="appointmentTableView" layoutX="567.0" layoutY="54.0" prefHeight="256.0" prefWidth="400.0">
-              <columns>
-                <TableColumn fx:id="id" prefWidth="106.0" text="Appointment ID" />
-                <TableColumn fx:id="title" prefWidth="44.0" text="Title" />
-                  <TableColumn fx:id="description" prefWidth="97.0" text="Description" />
-                  <TableColumn fx:id="locations" prefWidth="98.0" text="Location" />
-                  <TableColumn fx:id="type" prefWidth="75.0" text="Type" />
-                  <TableColumn fx:id="start" prefWidth="75.0" text="Start Time" />
-                  <TableColumn fx:id="end" prefWidth="75.0" text="End Time" />
-              </columns>
-            </TableView>
+      <TabPane layoutX="567.0" layoutY="29.0">
+         <tabs>
+            <Tab text="Weekly View" closable="false">
+               <content>
+                        <TableView fx:id="weekAppointmentTableView" prefHeight="256.0" prefWidth="400.0">
+                          <columns>
+                            <TableColumn fx:id="weekID" prefWidth="106.0" text="Appointment ID" />
+                            <TableColumn fx:id="weekTitle" prefWidth="44.0" text="Title" />
+                              <TableColumn fx:id="weekDescription" prefWidth="97.0" text="Description" />
+                              <TableColumn fx:id="weekLocations" prefWidth="98.0" text="Location" />
+                              <TableColumn fx:id="weekType" prefWidth="75.0" text="Type" />
+                              <TableColumn fx:id="weekStart" prefWidth="75.0" text="Start Time" />
+                              <TableColumn fx:id="weekEnd" prefWidth="75.0" text="End Time" />
+                              <TableColumn fx:id="weekCustomerID" prefWidth="75.0" text="Customer ID" />
+                              <TableColumn fx:id="weekUserID" prefWidth="75.0" text="User ID" />
+                          </columns>
+                        </TableView>
+               </content>
+            </Tab>
+             <Tab text="Monthly View" closable="false">
+                 <content>
+                     <TableView fx:id="monthAppointmentTableView" prefHeight="256.0" prefWidth="400.0">
+                         <columns>
+                             <TableColumn fx:id="monthID" prefWidth="106.0" text="Appointment ID" />
+                             <TableColumn fx:id="monthTitle" prefWidth="44.0" text="Title" />
+                             <TableColumn fx:id="monthDescription" prefWidth="97.0" text="Description" />
+                             <TableColumn fx:id="monthLocations" prefWidth="98.0" text="Location" />
+                             <TableColumn fx:id="monthType" prefWidth="75.0" text="Type" />
+                             <TableColumn fx:id="monthStart" prefWidth="75.0" text="Start Time" />
+                             <TableColumn fx:id="monthEnd" prefWidth="75.0" text="End Time" />
+                             <TableColumn fx:id="monthCustomerID" prefWidth="75.0" text="Customer ID" />
+                             <TableColumn fx:id="monthUserID" prefWidth="75.0" text="User ID" />
+                         </columns>
+                     </TableView>
+                 </content>
+             </Tab>
+         </tabs>
+      </TabPane>
             <TableView fx:id="customerTableView" layoutX="82.0" layoutY="54.0" prefHeight="256.0" prefWidth="422.0">
               <columns>
                 <TableColumn fx:id="customerId" prefWidth="76.0" text="Customer ID" />
