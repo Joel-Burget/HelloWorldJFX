@@ -7,7 +7,7 @@
          <children>
       <TabPane layoutX="567.0" layoutY="29.0">
          <tabs>
-            <Tab text="Weekly View" closable="false">
+            <Tab closable="false" text="Weekly View">
                <content>
                         <TableView fx:id="weekAppointmentTableView" prefHeight="256.0" prefWidth="400.0">
                           <columns>
@@ -24,7 +24,7 @@
                         </TableView>
                </content>
             </Tab>
-             <Tab text="Monthly View" closable="false">
+             <Tab closable="false" text="Monthly View">
                  <content>
                      <TableView fx:id="monthAppointmentTableView" prefHeight="256.0" prefWidth="400.0">
                          <columns>
@@ -54,11 +54,12 @@
               </columns>
             </TableView>
             <Button fx:id="newCustomer" layoutX="82.0" layoutY="327.0" mnemonicParsing="false" onAction="#newCustomerAction" text="Create New " />
-            <Button fx:id="createAppointment" layoutX="567.0" layoutY="327.0" mnemonicParsing="false" text="Create New " />
+            <Button fx:id="createAppointment" layoutX="567.0" layoutY="327.0" mnemonicParsing="false" onAction="#addAppointmentAction" text="Create New " />
             <Button fx:id="deleteCustomer" layoutX="242.0" layoutY="327.0" mnemonicParsing="false" onAction="#deleteCustomerAction" text="Delete" />
             <Button fx:id="editCustomer" layoutX="178.0" layoutY="327.0" mnemonicParsing="false" onAction="#modifyCustomerAction" text="Edit" />
-            <Button fx:id="editAppointment" layoutX="669.0" layoutY="327.0" mnemonicParsing="false" text="Edit" />
-            <Button fx:id="deleteAppointment" layoutX="726.0" layoutY="327.0" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="editAppointment" layoutX="669.0" layoutY="327.0" mnemonicParsing="false" onAction="#modifyAppointmentAction" text="Edit" />
+            <Button fx:id="deleteAppointment" layoutX="726.0" layoutY="327.0" mnemonicParsing="false" onAction="#deleteAppointmentAction" text="Delete" />
       <Label fx:id="customerWarningLabel" layoutX="94.0" layoutY="29.0" text="Label" textFill="#e80a0a" />
+      <Label fx:id="appointmentWarningLabel" layoutX="567.0" layoutY="14.0" text="Label" textFill="#dd0707" />
          </children>
 </Pane>

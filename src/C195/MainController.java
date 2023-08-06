@@ -1,30 +1,16 @@
 package C195;
 
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
-
-
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-
-import javafx.util.StringConverter;
-import javafx.util.converter.LocalDateTimeStringConverter;
-import java.util.Date;
-
 
 public class MainController {
     @FXML
@@ -91,54 +77,45 @@ public class MainController {
     public Button editAppointment;
     public Button deleteAppointment;
     public static Customers selectedCustomer;
+    public static Appointment selectedAppointment;
     public Label customerWarningLabel;
+    public Label appointmentWarningLabel;
 
     public void initialize() {
-        /*Appointment appointment = new Appointment(Appointment.generateAppointmentID(), "IT Scrum 2", "Weekly IT Scrum meeting",
-                "Conf 3", "Weekly", LocalDateTime.of(2023, 7, 24, 13, 0),
-                LocalDateTime.of(2023, 7, 24, 13, 30), LoginController.getUsername(),
-                "1", "1", 1);
-
-        Appointment.createAppointment(appointment);*/
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime aptTime = Appointment.getAllWeekAppointments().get(0).getStart();
-
+        appointmentWarningLabel.setVisible(false);
         customerWarningLabel.setVisible(false);
         //creating customer table
-        customerId.setCellValueFactory(new PropertyValueFactory<Customers, Integer>("customerId"));
-        customerName.setCellValueFactory(new PropertyValueFactory<Customers, String>("customerName"));
-        customerAddress.setCellValueFactory(new PropertyValueFactory<Customers, String>("address"));
-        customerZip.setCellValueFactory(new PropertyValueFactory<Customers, String>("customerZip"));
-        customerPhone.setCellValueFactory(new PropertyValueFactory<Customers, String>("customerPhone"));
-        divisionId.setCellValueFactory(new PropertyValueFactory<Customers, Integer>("divisionId"));
+        customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        customerName.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        customerAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+        customerZip.setCellValueFactory(new PropertyValueFactory<>("customerZip"));
+        customerPhone.setCellValueFactory(new PropertyValueFactory<>("customerPhone"));
+        divisionId.setCellValueFactory(new PropertyValueFactory<>("divisionId"));
         customerTableView.setItems(Customers.getAllCustomers());
 
 
         //creating week appointment table
-        weekID.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("appointmentID"));
-        weekTitle.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
-        weekDescription.setCellValueFactory(new PropertyValueFactory<Appointment, String>("description"));
-        weekLocations.setCellValueFactory(new PropertyValueFactory<Appointment, String>("location"));
+        weekID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
+        weekTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        weekDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+        weekLocations.setCellValueFactory(new PropertyValueFactory<>("location"));
         weekType.setCellValueFactory(new PropertyValueFactory<>("type"));
         weekStart.setCellValueFactory(new PropertyValueFactory<>("startString"));
         weekEnd.setCellValueFactory(new PropertyValueFactory<>("endString"));
-        weekCustomerID.setCellValueFactory(new PropertyValueFactory<Appointment, String>("customerID"));
-        weekUserID.setCellValueFactory(new PropertyValueFactory<Appointment, String>("userID"));
+        weekCustomerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
+        weekUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
         weekAppointmentTableView.setItems(Appointment.getAllWeekAppointments());
-        System.out.println(Appointment.getAllWeekAppointments().get(0).getStartString());
 
         //creating month appointment table
-        monthID.setCellValueFactory(new PropertyValueFactory<Appointment, Integer>("appointmentID"));
-        monthTitle.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
-        monthDescription.setCellValueFactory(new PropertyValueFactory<Appointment, String>("description"));
-        monthLocations.setCellValueFactory(new PropertyValueFactory<Appointment, String>("location"));
-        monthType.setCellValueFactory(new PropertyValueFactory<Appointment, String>("type"));
-        monthStart.setCellValueFactory(new PropertyValueFactory<Appointment, Time>("start"));
-        monthEnd.setCellValueFactory(new PropertyValueFactory<Appointment, Time>("end"));
-        monthCustomerID.setCellValueFactory(new PropertyValueFactory<Appointment, String>("customerID"));
-        monthUserID.setCellValueFactory(new PropertyValueFactory<Appointment, String>("userID"));
+        monthID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
+        monthTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        monthDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+        monthLocations.setCellValueFactory(new PropertyValueFactory<>("location"));
+        monthType.setCellValueFactory(new PropertyValueFactory<>("type"));
+        monthStart.setCellValueFactory(new PropertyValueFactory<>("startString"));
+        monthEnd.setCellValueFactory(new PropertyValueFactory<>("endString"));
+        monthCustomerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
+        monthUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
         monthAppointmentTableView.setItems(Appointment.getAllMonthAppointments());
 
     }
@@ -165,6 +142,7 @@ public class MainController {
     public static Customers getSelectedCustomer() {
         return selectedCustomer;
     }
+    public static Appointment getSelectedAppointment() {return selectedAppointment;}
 
     public void modifyCustomerAction() throws IOException {
         selectedCustomer = customerTableView.getSelectionModel().getSelectedItem();
@@ -195,7 +173,6 @@ public class MainController {
                 try {
                     JDBC.makePreparedStatement(statement, JDBC.getConnection());
                     ResultSet rs = JDBC.getPreparedStatement().executeQuery();
-                    System.out.println(statement);
                     while (rs.next()) {
                         count = rs.getInt(1);
                         if (count > 0) {
@@ -224,20 +201,92 @@ public class MainController {
               customerWarningLabel.setVisible(true);
             }
     }
-    public static class Item {
-        private LocalDateTime date;
 
-        public Item(LocalDateTime date) {
-            this.date = date;
-        }
+    public void addAppointmentAction() throws IOException{
+        //Creates a reference to FXML
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("createAppointment.fxml"));
+        Parent root = loader.load();
+        CreateAppointmentController appointmentController = loader.getController();
+        appointmentController.setMainController(this);
 
-        public LocalDateTime getDate() {
-            return date;
-        }
-
-        public void setDate(LocalDateTime date) {
-            this.date = date;
-        }
+        //creating new window
+        Stage addCustomer = new Stage();
+        addCustomer.setTitle("Create a new Appointment");
+        addCustomer.setScene(new Scene(root, 437, 450));
+        addCustomer.show();
     }
+
+    public void modifyAppointmentAction() throws IOException{
+        selectedAppointment = weekAppointmentTableView.getSelectionModel().getSelectedItem();
+        appointmentWarningLabel.setVisible(false);
+
+        if(selectedAppointment != null){
+            //Creates a reference to FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyAppointmentForm.fxml"));
+            Parent root = loader.load();
+            ModifyAppointmentController appointmentController = loader.getController();
+            appointmentController.setMainController(this);
+
+            //creating new window
+            Stage addCustomer = new Stage();
+            addCustomer.setTitle("Modify an Appointment");
+            addCustomer.setScene(new Scene(root, 437, 450));
+            addCustomer.show();
+        }else if(monthAppointmentTableView.getSelectionModel().getSelectedItem() != null){
+            selectedAppointment = monthAppointmentTableView.getSelectionModel().getSelectedItem();
+
+            //Creates a reference to FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyAppointment.fxml"));
+            Parent root = loader.load();
+            CreateAppointmentController appointmentController = loader.getController();
+            appointmentController.setMainController(this);
+
+            //creating new window
+            Stage addCustomer = new Stage();
+            addCustomer.setTitle("Modify an Appointment");
+            addCustomer.setScene(new Scene(root, 437, 450));
+            addCustomer.show();
+        }else{
+            appointmentWarningLabel.setText("Please select an appointment.");
+            appointmentWarningLabel.setVisible(true);
+        }
+
+    }
+
+    public void refreshAppointmentTables(){
+        weekAppointmentTableView.getItems().clear();
+        weekAppointmentTableView.setItems(Appointment.getAllWeekAppointments());
+
+        monthAppointmentTableView.getItems().clear();
+        monthAppointmentTableView.setItems(Appointment.getAllMonthAppointments());
+    }
+
+    public void deleteAppointmentAction(){
+        Appointment selectedAppointment;
+        if(monthAppointmentTableView.getSelectionModel().getSelectedItem() != null){
+            selectedAppointment = monthAppointmentTableView.getSelectionModel().getSelectedItem();
+
+            try{
+                String query = "DELETE FROM appointments WHERE Appointment_ID= " + selectedAppointment.getAppointmentID() + ";";
+                JDBC.makePreparedStatement(query, JDBC.getConnection());
+                JDBC.getPreparedStatement().executeUpdate();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+        if(weekAppointmentTableView.getSelectionModel().getSelectedItem() != null){
+            selectedAppointment = weekAppointmentTableView.getSelectionModel().getSelectedItem();
+
+            try{
+                String query = "DELETE FROM appointments WHERE Appointment_ID= " + selectedAppointment.getAppointmentID() + ";";
+                JDBC.makePreparedStatement(query, JDBC.getConnection());
+                JDBC.getPreparedStatement().executeUpdate();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+        refreshAppointmentTables();
+    }
+
 }
 

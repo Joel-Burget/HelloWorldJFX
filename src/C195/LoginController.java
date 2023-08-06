@@ -36,7 +36,6 @@ public class LoginController {
 
     public void initialize() throws IOException {
         Locale currentLocale = Locale.getDefault();
-        System.out.println(currentLocale);
         regionLabel.setText(currentLocale.toString());
         systemLanguage = Locale.getDefault().getLanguage();
 
@@ -79,7 +78,6 @@ public class LoginController {
                     else{
                         //setting error message for incorrect password
                         if(!rs.getString(3).equals(password)){
-                            System.out.println("This logic fired");
                             if(systemLanguage.equals("fr")){
                                 errorLabel.setText("Le mot de passe est incorrect");
                             }else{
