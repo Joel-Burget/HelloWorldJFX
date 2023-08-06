@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class MainController {
     @FXML
@@ -80,6 +83,7 @@ public class MainController {
     public static Appointment selectedAppointment;
     public Label customerWarningLabel;
     public Label appointmentWarningLabel;
+    public TextArea upComingAppointments;
 
     public void initialize() {
         appointmentWarningLabel.setVisible(false);
@@ -118,6 +122,19 @@ public class MainController {
         monthUserID.setCellValueFactory(new PropertyValueFactory<>("userID"));
         monthAppointmentTableView.setItems(Appointment.getAllMonthAppointments());
 
+        upComingAppointments.setText("You have no upcoming appointments.");
+
+        for (Appointment appointment: Appointment.getAllAppointments()) {
+            LocalDateTime fifteenMinutes = LocalDateTime.now().plusMinutes(15);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
+            LocalDateTime appointmentTime = LocalDateTime.parse(appointment.getStartString(), dtf);
+            int minutes = (int) ChronoUnit.MINUTES.between(appointmentTime, fifteenMinutes);
+
+            if(minutes <= 15 && minutes >= 0){
+                upComingAppointments.setText("You have an upcoming appointment:\nAppointment ID: " + appointment.getAppointmentID() +
+                        "\nDate: " + appointment.getStartString());
+            }
+        }
     }
 
     public void newCustomerAction() throws IOException {
