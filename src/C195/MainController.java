@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+
+import javax.xml.transform.Result;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,6 +16,7 @@ import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class MainController {
     @FXML
@@ -84,6 +87,7 @@ public class MainController {
     public Label customerWarningLabel;
     public Label appointmentWarningLabel;
     public TextArea upComingAppointments;
+    public TextArea totalReportField;
 
     public void initialize() {
         appointmentWarningLabel.setVisible(false);
@@ -135,6 +139,8 @@ public class MainController {
                         "\nDate: " + appointment.getStartString());
             }
         }
+
+        typeReport();
     }
 
     public void newCustomerAction() throws IOException {
@@ -253,9 +259,9 @@ public class MainController {
             selectedAppointment = monthAppointmentTableView.getSelectionModel().getSelectedItem();
 
             //Creates a reference to FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyAppointment.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ModifyAppointmentForm.fxml"));
             Parent root = loader.load();
-            CreateAppointmentController appointmentController = loader.getController();
+            ModifyAppointmentController appointmentController = loader.getController();
             appointmentController.setMainController(this);
 
             //creating new window
@@ -305,5 +311,45 @@ public class MainController {
         refreshAppointmentTables();
     }
 
+    public void typeReport(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
+
+        ArrayList<String> types = new ArrayList<String>();
+        ArrayList<String> months = new ArrayList<String>();
+        totalReportField.setText("Total Appointments by Type In: " + LocalDateTime.now().getMonth() + "\n");
+
+        int count = 0;
+        for(Appointment appointment: Appointment.getAllAppointments()) {
+            if(!types.contains(appointment.getType().toLowerCase())){
+                types.add(appointment.getType());
+            }
+        }
+        for(Appointment appointment : Appointment.getAllAppointments()){
+            LocalDateTime date = LocalDateTime.parse(appointment.getStartString(), dtf);
+            String month = date.getMonth().toString();
+
+            if(!months.contains(month)){
+                months.add(month);
+            }
+        }
+
+        for (String type: types) {
+            String query = "SELECT COUNT(Appointment_ID) FROM appointments WHERE MONTH(start) = MONTH(CURRENT_DATE) AND type ='" + type + "';";
+            try{
+                JDBC.makePreparedStatement(query, JDBC.getConnection());
+                ResultSet rs = JDBC.getPreparedStatement().executeQuery();
+
+                while(rs.next()){
+                    totalReportField.appendText(type + ": " + rs.getInt(1) + " appointments\n");
+                }
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void contactReport(){
+
+    }
 }
 

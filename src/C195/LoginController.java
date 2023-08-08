@@ -70,7 +70,7 @@ public class LoginController {
                         Stage mainForm = new Stage();
                         Parent root = FXMLLoader.load(getClass().getResource("mainForm.fxml"));
                         mainForm.setTitle("Welcome");
-                        mainForm.setScene(new Scene(root, 1120, 522));
+                        mainForm.setScene(new Scene(root, 1120, 650));
                         mainForm.show();
                         Stage login = (Stage) loginButton.getScene().getWindow();
                         login.close();
