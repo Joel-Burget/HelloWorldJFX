@@ -1,5 +1,7 @@
 package C195;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,15 +10,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import javax.xml.transform.Result;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainController {
     @FXML
@@ -88,6 +91,22 @@ public class MainController {
     public Label appointmentWarningLabel;
     public TextArea upComingAppointments;
     public TextArea totalReportField;
+    public ChoiceBox contactBox;
+
+    @FXML
+    public TableView <Appointment> scheduleReportTable;
+    @FXML
+    public TableColumn<Appointment, String> appointmentID;
+    @FXML
+    public TableColumn<Appointment, String> title;
+    @FXML
+    public TableColumn<Appointment, String> description;
+    @FXML
+    public TableColumn<Appointment, LocalDateTime> start;
+    @FXML
+    public TableColumn<Appointment, LocalDateTime> end;
+    @FXML
+    public TableColumn<Appointment, Integer> customerID;
 
     public void initialize() {
         appointmentWarningLabel.setVisible(false);
@@ -141,6 +160,7 @@ public class MainController {
         }
 
         typeReport();
+        contactReport();
     }
 
     public void newCustomerAction() throws IOException {
@@ -349,7 +369,57 @@ public class MainController {
     }
 
     public void contactReport(){
+        String query;
+        ObservableList<String> contactList = FXCollections.observableArrayList();
+        ObservableList<Appointment> selectedAppointments = FXCollections.observableArrayList();
 
+        try {
+            query = "SELECT * FROM contacts";
+            JDBC.makePreparedStatement(query, JDBC.getConnection());
+            ResultSet rs = JDBC.getPreparedStatement().executeQuery();
+            while(rs.next()){
+                contactList.add(rs.getString(2));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        contactBox.setItems(contactList);
+
+        contactBox.setOnAction((e) ->{
+            selectedAppointments.clear();
+            scheduleReportTable.getItems().clear();
+            int id = 0;
+           String getID = "SELECT * FROM contacts WHERE Contact_Name = '" + contactBox.getSelectionModel().getSelectedItem() + "';";
+
+           try{
+               JDBC.makePreparedStatement(getID, JDBC.getConnection());
+               ResultSet rs2 = JDBC.getPreparedStatement().executeQuery();
+               while(rs2.next()){
+                  id = rs2.getInt(1);
+               }
+           }catch(SQLException exception){
+               exception.printStackTrace();
+           }
+
+            for (Appointment appointment: Appointment.getAllAppointments()) {
+                if(appointment.getContactID() == id){
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
+                    LocalDateTime startTime = LocalDateTime.parse(appointment.getStartString(), dtf);
+                    if(startTime.isAfter(LocalDateTime.now().minus(Period.ofDays(1)))){
+                        selectedAppointments.add(appointment);
+                    }
+                }
+            }
+
+            appointmentID.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
+            title.setCellValueFactory(new PropertyValueFactory<>("title"));
+            description.setCellValueFactory(new PropertyValueFactory<>("description"));
+            start.setCellValueFactory(new PropertyValueFactory<>("startString"));
+            end.setCellValueFactory(new PropertyValueFactory<>("endString"));
+            customerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
+            scheduleReportTable.setItems(selectedAppointments);
+        });
     }
 }
 
