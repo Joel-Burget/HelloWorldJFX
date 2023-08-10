@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane prefHeight="650.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.MainController">
+<Pane prefHeight="725.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="C195.MainController">
     <TabPane layoutX="561.0" layoutY="126.0">
         <Tab closable="false" text="Weekly View">
             <TableView fx:id="weekAppointmentTableView" prefHeight="256.0" prefWidth="400.0">
@@ -58,4 +58,19 @@
     <TextArea fx:id="upComingAppointments" editable="false" layoutX="83.0" layoutY="38.0" prefHeight="82.0" prefWidth="258.0" />
    <TextArea fx:id="totalReportField" editable="false" layoutX="83.0" layoutY="494.0" prefHeight="150.0" prefWidth="287.0" />
    <Label layoutX="81.0" layoutY="470.0" text="Reports" />
+   <ChoiceBox fx:id="contactBox" layoutX="379.0" layoutY="494.0" prefHeight="25.0" prefWidth="120.0" />
+   <TableView fx:id="scheduleReportTable" layoutX="507.0" layoutY="479.0" prefHeight="168.0" prefWidth="451.0">
+     <columns>
+       <TableColumn fx:id="appointmentID" prefWidth="75.0" text="Appointment ID" />
+       <TableColumn fx:id="title" prefWidth="75.0" text="Title" />
+         <TableColumn fx:id="description" prefWidth="75.0" text="Description" />
+         <TableColumn fx:id="start" prefWidth="75.0" text="Start Time" />
+         <TableColumn fx:id="end" prefWidth="75.0" text="End Time" />
+         <TableColumn fx:id="customerID" prefWidth="75.0" text="Customer ID" />
+     </columns>
+   </TableView>
+   <ComboBox fx:id="totalReportBox" layoutX="81.0" layoutY="664.0" prefHeight="25.0" prefWidth="120.0" />
+   <Label layoutX="510.0" layoutY="462.0" text="Customer Schedule" />
+   <Label layoutX="81.0" layoutY="647.0" text="Total Month Hours" />
+   <TextArea fx:id="totalHourText" editable="false" layoutX="214.0" layoutY="658.0" prefHeight="38.0" prefWidth="337.0" />
 </Pane>

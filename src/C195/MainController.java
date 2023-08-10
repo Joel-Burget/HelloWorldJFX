@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -107,6 +108,8 @@ public class MainController {
     public TableColumn<Appointment, LocalDateTime> end;
     @FXML
     public TableColumn<Appointment, Integer> customerID;
+    public ComboBox totalReportBox;
+    public TextArea totalHourText;
 
     public void initialize() {
         appointmentWarningLabel.setVisible(false);
@@ -161,6 +164,7 @@ public class MainController {
 
         typeReport();
         contactReport();
+        totalHoursReport();
     }
 
     public void newCustomerAction() throws IOException {
@@ -419,6 +423,63 @@ public class MainController {
             end.setCellValueFactory(new PropertyValueFactory<>("endString"));
             customerID.setCellValueFactory(new PropertyValueFactory<>("customerID"));
             scheduleReportTable.setItems(selectedAppointments);
+        });
+    }
+
+    public void totalHoursReport(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
+        String query;
+
+        ObservableList<String> contactList = FXCollections.observableArrayList();
+
+        try {
+            query = "SELECT * FROM contacts";
+            JDBC.makePreparedStatement(query, JDBC.getConnection());
+            ResultSet rs = JDBC.getPreparedStatement().executeQuery();
+            while(rs.next()){
+                contactList.add(rs.getString(2));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
+        totalReportBox.setItems(contactList);
+
+        totalReportBox.setOnAction((e) -> {
+            long totalMonthHours = 0;
+            long totalMonthMin = 0;
+            int id = 0;
+            String getID = "SELECT * FROM contacts WHERE Contact_Name = '" + totalReportBox.getSelectionModel().getSelectedItem() + "';";
+            try{
+                JDBC.makePreparedStatement(getID, JDBC.getConnection());
+                ResultSet rs2 = JDBC.getPreparedStatement().executeQuery();
+                while(rs2.next()){
+                    id = rs2.getInt(1);
+                }
+            }catch(SQLException exception){
+                exception.printStackTrace();
+            }
+
+            for (Appointment appointment : Appointment.getAllMonthAppointments()) {
+                if(appointment.getContactID() == id){
+                    LocalDateTime start = LocalDateTime.parse(appointment.getStartString(), dtf);
+                    LocalDateTime end = LocalDateTime.parse(appointment.getEndString(), dtf);
+                    long diffHour = Duration.between(start, end).toHours();
+
+                    if(diffHour == 0){
+                        long diffMin = Duration.between(start, end).toMinutes();
+                        totalMonthMin = totalMonthMin + diffMin;
+
+                    }
+                    totalMonthHours = totalMonthHours + diffHour;
+                }
+            }
+            while(totalMonthMin >= 60){
+                totalMonthMin = totalMonthMin - 60;
+                totalMonthHours = totalMonthHours + 1;
+            }
+            totalHourText.setText(totalReportBox.getSelectionModel().getSelectedItem() + " has " + totalMonthHours + " hours " +
+                    "and " + totalMonthMin + " mintues of appointments.");
         });
     }
 }
