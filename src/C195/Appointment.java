@@ -50,8 +50,17 @@ public class Appointment {
         this.customerID = customerID;
         this.userID = userID;
         this.contactID = contactID;
-    }
 
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
+        LocalDateTime start = LocalDateTime.parse(startString, dtf);
+        LocalDateTime end = LocalDateTime.parse(endString, dtf);
+
+        this.setStart(start);
+        this.setEnd(end);
+    }
+    /**
+     * returns appointments from database filtered to current week
+     */
     public static ObservableList<Appointment> getAllWeekAppointments(){
         ObservableList<Appointment> allAppointmentsByWeek = FXCollections.observableArrayList();
         int gotUserID = 0;
@@ -102,7 +111,9 @@ public class Appointment {
 
         return allAppointmentsByWeek;
     }
-
+    /**
+     * returns appointments from database filtered by current month
+     */
     public static ObservableList<Appointment> getAllMonthAppointments(){
         ObservableList<Appointment> allAppointmentsByMonth = FXCollections.observableArrayList();
         int gotUserID = 0;
@@ -154,6 +165,9 @@ public class Appointment {
         return allAppointmentsByMonth;
     }
 
+    /**
+     * returns all appointments from database
+     */
     public static ObservableList<Appointment> getAllAppointments(){
         ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
 
@@ -192,7 +206,9 @@ public class Appointment {
 
         return allAppointments;
     }
-
+    /**
+     * creates appointment and adds to database, updates appointment tables in MainController
+     */
     public static void createAppointment(Appointment appointment){
         String query = "INSERT INTO appointments (Appointment_ID, Title, Description, Location, Type, Start, End, Create_Date, Created_By," +
                 "Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) VALUES ('" + appointment.getAppointmentID() + "', '" +
@@ -209,7 +225,9 @@ public class Appointment {
             e.printStackTrace();
         }
     }
-
+    /**
+     * generates appointmentID field based on current count of appointments in database
+     */
     public static int generateAppointmentID(){
         int appointmentID;
         try{
@@ -226,7 +244,9 @@ public class Appointment {
         }
         return 0;
     }
-
+    /**
+     * Getters/setters for fields
+     */
     public int getAppointmentID() {
         return appointmentID;
     }

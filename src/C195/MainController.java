@@ -111,6 +111,11 @@ public class MainController {
     public ComboBox totalReportBox;
     public TextArea totalHourText;
 
+    /**
+     * Builds GUI tables and populates. Checks for appointments starting in 15 min of login based on userName
+     * used to log in. Also calls methods to generate reports
+     */
+
     public void initialize() {
         appointmentWarningLabel.setVisible(false);
         customerWarningLabel.setVisible(false);
@@ -166,6 +171,9 @@ public class MainController {
         contactReport();
         totalHoursReport();
     }
+    /**
+     * Action for new customer button, launches new customer form
+     */
 
     public void newCustomerAction() throws IOException {
        //Creates a reference to FXML
@@ -181,15 +189,27 @@ public class MainController {
         addCustomer.show();
     }
 
+    /**
+     * checks customer table for changes, rebuilds table
+     */
+
     public void refreshCustomerTable() {
         customerTableView.getItems().clear();
         customerTableView.setItems(Customers.getAllCustomers());
     }
 
+    /**
+     * getters for selected customer/appointment
+     */
+
     public static Customers getSelectedCustomer() {
         return selectedCustomer;
     }
     public static Appointment getSelectedAppointment() {return selectedAppointment;}
+
+    /**
+     * action for modify customer button, launches modify customer form
+     */
 
     public void modifyCustomerAction() throws IOException {
         selectedCustomer = customerTableView.getSelectionModel().getSelectedItem();
@@ -210,6 +230,10 @@ public class MainController {
             customerWarningLabel.setVisible(true);
         }
     }
+
+    /**
+     * Deletes selected customer on customer table, also updates database
+     */
 
     public void deleteCustomerAction() {
         selectedCustomer = customerTableView.getSelectionModel().getSelectedItem();
@@ -249,6 +273,10 @@ public class MainController {
             }
     }
 
+    /**
+     *  launches add appointment form
+     */
+
     public void addAppointmentAction() throws IOException{
         //Creates a reference to FXML
         FXMLLoader loader = new FXMLLoader(getClass().getResource("createAppointment.fxml"));
@@ -262,6 +290,9 @@ public class MainController {
         addCustomer.setScene(new Scene(root, 437, 450));
         addCustomer.show();
     }
+    /**
+      * launches modify appointment form, checks that an appointment is selected
+     */
 
     public void modifyAppointmentAction() throws IOException{
         selectedAppointment = weekAppointmentTableView.getSelectionModel().getSelectedItem();
@@ -299,7 +330,9 @@ public class MainController {
         }
 
     }
-
+    /**
+     * rebuilds appointment tables, removes and re-adds table data from database
+     */
     public void refreshAppointmentTables(){
         weekAppointmentTableView.getItems().clear();
         weekAppointmentTableView.setItems(Appointment.getAllWeekAppointments());
@@ -307,7 +340,9 @@ public class MainController {
         monthAppointmentTableView.getItems().clear();
         monthAppointmentTableView.setItems(Appointment.getAllMonthAppointments());
     }
-
+    /**
+     * Deletes appointment from table and database, checks that an appointment is selected
+     */
     public void deleteAppointmentAction(){
         Appointment selectedAppointment;
         if(monthAppointmentTableView.getSelectionModel().getSelectedItem() != null){
@@ -320,6 +355,9 @@ public class MainController {
             }catch(SQLException e){
                 e.printStackTrace();
             }
+            appointmentWarningLabel.setText("Appointment with Appointment ID: " + selectedAppointment.getAppointmentID() + " of type: "
+                    + selectedAppointment.getType() + " has been deleted.");
+            appointmentWarningLabel.setVisible(true);
         }
         if(weekAppointmentTableView.getSelectionModel().getSelectedItem() != null){
             selectedAppointment = weekAppointmentTableView.getSelectionModel().getSelectedItem();
@@ -331,10 +369,16 @@ public class MainController {
             }catch(SQLException e){
                 e.printStackTrace();
             }
+            appointmentWarningLabel.setText("Appointment with Appointment ID: " + selectedAppointment.getAppointmentID() + " of type: "
+                    + selectedAppointment.getType() + " has been deleted.");
+            appointmentWarningLabel.setVisible(true);
         }
+
         refreshAppointmentTables();
     }
-
+    /**
+     * Generates report of appointment types
+     */
     public void typeReport(){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
 
@@ -371,7 +415,9 @@ public class MainController {
             }
         }
     }
-
+    /**
+     * generates table of appointments by contact from dropdown
+     */
     public void contactReport(){
         String query;
         ObservableList<String> contactList = FXCollections.observableArrayList();
@@ -425,6 +471,9 @@ public class MainController {
             scheduleReportTable.setItems(selectedAppointments);
         });
     }
+    /**
+     * Generates report of how many hours of appointments this contact has this month
+     */
 
     public void totalHoursReport(){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");

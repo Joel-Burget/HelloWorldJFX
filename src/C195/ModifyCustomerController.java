@@ -34,7 +34,9 @@ public class ModifyCustomerController {
     String state;
     ObservableList<String> countries = FXCollections.observableArrayList();
     ObservableList<String> states = FXCollections.observableArrayList();
-
+    /**
+     * populates from with data from selected user
+     */
     public void initialize(){
         warningLabel.setVisible(false);
         customerIDField.setText(Integer.toString(MainController.getSelectedCustomer().getCustomerId()));
@@ -114,7 +116,9 @@ public class ModifyCustomerController {
         }
     }
 
-
+    /**
+     * validates user input and calls updateCustomer from Customer class
+     */
     public void modifyButtonAction(ActionEvent actionEvent) {
         int divisionID = 0;
 
@@ -174,7 +178,9 @@ public class ModifyCustomerController {
         }
 
     }
-
+    /**
+     * closes form
+     */
     public void cancelButtonAction(ActionEvent actionEvent) {
         cancelButton.getScene().getWindow().hide();
     }

@@ -7,6 +7,8 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
+
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
@@ -31,11 +33,13 @@ public class ModifyAppointmentController {
     public ComboBox contactBox;
     public Button saveButton;
     public Button cancelButton;
-
+    /**
+     * populates user input based on selected appointment to modify
+     */
     public void initialize(){
         timeWarningLabel.setVisible(false);
         ObservableList<Integer> hours = FXCollections.observableArrayList();
-        hours.addAll(8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+        hours.addAll(8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22);
         ObservableList<Integer> minutes = FXCollections.observableArrayList();
         minutes.addAll(00, 30);
         appointmentIDField.setText(Integer.toString(Appointment.generateAppointmentID()));
@@ -91,12 +95,29 @@ public class ModifyAppointmentController {
         locationField.setText(selectedAppointment.getLocation());
         typeField.setText(selectedAppointment.getType());
 
+        contactBox.getSelectionModel().select(selectedAppointment.getContactID() -1);
+        customerBox.getSelectionModel().select(Integer.parseInt(selectedAppointment.getCustomerID()) -1);
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
+
+
+        LocalDateTime startDateTime = LocalDateTime.parse(selectedAppointment.getStartString(), dtf);
+        LocalDateTime endDateTime = LocalDateTime.parse(selectedAppointment.getEndString(), dtf);
+        startPicker.setValue(LocalDate.from(startDateTime));
+        endPicker.setValue(LocalDate.from(endDateTime));
+
+        startHour.setValue(startDateTime.getHour());
+        startMinute.setValue(startDateTime.getMinute());
+        endHour.setValue(endDateTime.getHour());
+        endMinute.setValue(endDateTime.getMinute());
     }
 
     public void setMainController(MainController MC) {
         this.MC = MC;
     }
-
+    /**
+     * validates user input and calls updateAppoinment from Appointment class
+     */
     public void saveButtonAction(){
         if(verifySave()){
             String query = "SELECT * FROM contacts WHERE Contact_Name= '" + contactBox.getSelectionModel().getSelectedItem() + "';";
@@ -138,8 +159,8 @@ public class ModifyAppointmentController {
 
 
              query = "UPDATE appointments SET Title = '" + appointment.getTitle() + "', " + "Description = '" + appointment.getDescription()
-                     + "', " + "Type = ' " + appointment.getType() + "', " + "Start = '" + appointment.getStart() + "', " +
-                     "End ='" + appointment.getEnd() +  "', " + "Last_Update = '" + LocalDateTime.now() + "', "
+                     + "', " + "Type = ' " + appointment.getType() + "', " + "Start = '" + appointment.getStart() + "', " + "Location = ' "
+                     + appointment.getLocation() + "', " + "End ='" + appointment.getEnd() +  "', " + "Last_Update = '" + LocalDateTime.now() + "', "
                      + "Last_Updated_By = '" + LoginController.getUsername() + "', " + "Customer_ID = ' " +
                      appointment.getCustomerID() + "', " + "User_ID = '" + appointment.getUserID() + "', "
                      + "Contact_ID = '" + appointment.getContactID()  + "' " + "WHERE Appointment_ID= '" + appointment.getAppointmentID() + "';";
@@ -155,15 +176,21 @@ public class ModifyAppointmentController {
             saveButton.getScene().getWindow().hide();
         }
     }
-
+    /**
+     * closes form
+     */
     public void cancelButtonAction(){
         cancelButton.getScene().getWindow().hide();
     }
-
+    /**
+     * converts user entered time to UTC
+     */
     public LocalDateTime convertToUtc(LocalDateTime time){
         return time.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
     }
-
+    /**
+     * logic for validating user inputs, highlights missing input
+     */
     public boolean verifySave(){
         if(titleField.getText().isEmpty()){
             titleField.setBorder(new Border(new BorderStroke(javafx.scene.paint.Paint.valueOf("red"), BorderStrokeStyle.SOLID,
@@ -205,49 +232,28 @@ public class ModifyAppointmentController {
             return true;
         }else{
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
-            for (Appointment appointment: Appointment.getAllAppointments()) {
-                LocalDateTime startDate = LocalDateTime.of(startPicker.getValue(), LocalTime.of(startHour.getValue(), startMinute.getValue()));
-                LocalDateTime endDate = LocalDateTime.of(endPicker.getValue(), LocalTime.of(endHour.getValue(), endMinute.getValue()));
-
-                boolean between = isBetween(appointment, startDate, endDate);
-                if(between){
-                    timeWarningLabel.setText("Cannot schedule an appointment during and appointment");
-                    timeWarningLabel.setVisible(true);
-                    return false;
-                }else{
-                    boolean diff = overlaps(appointment, startDate, endDate);
-                    if(diff){
-                        //true: dates overlap
-                        timeWarningLabel.setText("Appointments overlap");
-                        timeWarningLabel.setVisible(true);
-                        return false;
-                    }else{
-                        //false: valid time
-                        timeWarningLabel.setText("Appointments set");
-                        timeWarningLabel.setVisible(true);
-                        return true;
-                    }
-                }
+            LocalDateTime startDate = LocalDateTime.of(startPicker.getValue(), LocalTime.of(startHour.getValue(), startMinute.getValue()));
+            LocalDateTime endDate = LocalDateTime.of(endPicker.getValue(), LocalTime.of(endHour.getValue(), endMinute.getValue()));
+            if(isAvailable(startDate, endDate)){
+                return true;
+            }else{
+                return false;
+            }
+            // testCases();
+        }
+    }
+    /**
+     * checks for appointment overlap
+     */
+    /**
+     * logic to check if appointments overlap
+     */
+    public static boolean isAvailable(LocalDateTime startTime, LocalDateTime endTime){
+        for (Appointment appointment: Appointment.getAllAppointments()) {
+            if(startTime.isBefore(appointment.getEnd()) && endTime.isAfter(appointment.getStart())){
+                return false;
             }
         }
         return true;
-    }
-
-    public boolean overlaps(Appointment appointment, LocalDateTime inputStartDate, LocalDateTime inputEndDate){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
-
-        LocalDateTime appointmentStartDate = LocalDateTime.parse(appointment.getStartString(), dtf);
-        LocalDateTime appointmentEndDate = LocalDateTime.parse(appointment.getEndString(), dtf);
-
-        return inputEndDate.isAfter(appointmentStartDate) && inputStartDate.isBefore(appointmentEndDate);
-    }
-
-    public boolean isBetween(Appointment appointment, LocalDateTime inputStartDate, LocalDateTime inputEndDate){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm");
-
-        LocalDateTime appointmentStartDate = LocalDateTime.parse(appointment.getStartString(), dtf);
-        LocalDateTime appointmentEndDate = LocalDateTime.parse(appointment.getEndString(), dtf);
-
-        return inputStartDate.isAfter(appointmentStartDate) && inputStartDate.isBefore(appointmentEndDate);
     }
 }

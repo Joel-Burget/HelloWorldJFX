@@ -33,7 +33,9 @@ public class AddCustomerController{
     String state;
     ObservableList<String> countries = FXCollections.observableArrayList();
     ObservableList<String> states = FXCollections.observableArrayList();
-
+    /**
+     * Generates form for adding a customer, builds lists of countries and states in comboboxes
+     */
     public void initialize() {
         warningLabel.setVisible(false);
         //Adding Countries to combo box
@@ -42,7 +44,9 @@ public class AddCustomerController{
         countries.add("United States");
         countryBox.setItems(countries);
 
-        //setting on-action to generate state combo box based on country selected
+        /**
+         * lamda used to build on action to update state dropdown based on country selection
+         */
         countryBox.setOnAction((e) -> {
             stateBox.getItems().clear();
             if(countryBox.getSelectionModel().getSelectedItem().equals("Canada")){
@@ -82,7 +86,9 @@ public class AddCustomerController{
             }
             });
     }
-
+    /**
+     * Validates user input, if valid, updates both database and customer tables in MainController
+     */
     public void addButtonAction(){
         int ID = Customers.generateCustomerID();
         String name = nameField.getText();

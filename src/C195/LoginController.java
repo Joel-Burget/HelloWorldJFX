@@ -14,8 +14,14 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+/**
+ * @auther Joel Burget
+ */
+
 
 public class LoginController {
 
@@ -38,9 +44,16 @@ public class LoginController {
     String password;
     String systemLanguage;
 
+
+    /**
+     *  Initializes the class by checking the system default locale, language, and setting warnings and fields to
+     *  English or French as needed
+     */
+
     public void initialize() throws IOException {
         Locale currentLocale = Locale.getDefault();
-        regionLabel.setText(currentLocale.toString());
+        ZoneId zone = ZoneId.systemDefault();
+        regionLabel.setText(currentLocale.toString() + " : " + zone);
         systemLanguage = Locale.getDefault().getLanguage();
 
 
@@ -56,6 +69,11 @@ public class LoginController {
             cancelButton.setLayoutX(250);
         }
     }
+
+    /**
+     * checks login name and password against users table in database, either logs in and launches mainForm or fails
+     * with applicable error message appearing, updates loginActivity.txt with username, result, and timestamp of login attempt
+     */
 
 
     public void loginAction(ActionEvent actionEvent) throws IOException {

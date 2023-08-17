@@ -31,7 +31,9 @@ public class Customers {
         this.customerPhone = customerPhone;
         this.divisionId = divisionId;
     }
-
+    /**
+     * returns list of all customers
+     */
     public static ObservableList<Customers> getAllCustomers(){
         ObservableList<Customers> allCustomers = FXCollections.observableArrayList();
         String statement = "SELECT * FROM Customers";
@@ -63,7 +65,9 @@ public class Customers {
         return allCustomers;
     }
 
-
+    /**
+     * creates customer in database
+     */
     public static void createCustomer(Customers customer){
         String statement = "INSERT INTO customers (Customer_ID, Customer_Name, Address, Postal_Code, Phone, Create_Date, Last_Update, Division_ID, Created_By, Last_Updated_By) VALUES('"
                 + customer.getCustomerId() + "', '" + customer.getCustomerName() + "', '" + customer.getAddress() + "', '" + customer.getCustomerZip()
@@ -81,7 +85,9 @@ public class Customers {
             e.printStackTrace();
         }
     }
-
+    /**
+     * updates customers data in database
+     */
     public static void updateCustomer(Customers customer){
         String statement = "UPDATE customers SET Customer_Name = '" + customer.getCustomerName() + "', Address =" + "'" + customer.getAddress()
                 + "', " + "Postal_Code = '" + customer.getCustomerZip() + "', "
@@ -97,7 +103,9 @@ public class Customers {
         }
 
     }
-
+    /**
+     * deletes selected customer from database
+     */
     public static void deleteCustomer(int customerID){
         int count;
         String statement = "SELECT COUNT(Appointment_ID) FROM appointments WHERE Customer_ID='" + customerID + "'";
@@ -122,7 +130,9 @@ public class Customers {
         }
     }
 
-
+    /**
+     * generates customerID based on max values in database
+     */
     public static int generateCustomerID() {
         int customerID;
         try{
@@ -142,7 +152,9 @@ public class Customers {
     }
 
 
-
+    /**
+     * getters/setters
+     */
     public String getCustomerName() {
         return customerName;
     }
